@@ -208,4 +208,113 @@ Tailwind CDN의 기본 `darkMode` 전략은 `'media'`(시스템 설정 감지)�
 
 # 5. 비교 및 회고
 
-1) BEM 방식으로 다시 설계
+## 1) BEM 방식으로 다시 설계
+
+## 2) Tailwind 사용 경험
+
+
+## 편했던 점
+- style과 분리되어 있지 않아 현재 보는 태그에 어떤 style이 적용되어 있는지 파악하기 편하다.
+- 클래스 명을 따로 고민할 필요가 없다.
+
+## 불편했던 점
+- 구체적이 스타일을 지정하기 위해서는 클래스의 나열이 매우 길어져서 html 코드의 구조를 파악하기가 매우 힘들다.
+- 같은 형식의 모든 태그에 같은 클래스 명을 넣어줘야해 재사용성이 떨어진다.
+
+##  BEM vs. Tailwind 차이
+
+동일한 카드 UI를 BEM + 순수 CSS로 다시 구현했다(`index-bem.html`). HTML 구조는 그대로 유지하되, Tailwind 유틸리티 클래스 대신 BEM 클래스명을 붙이고 모든 스타일을 `<style>` 블록에 분리해 작성했다.
+
+**BEM 클래스 구조**
+
+```
+card                      ← Block: 카드 전체
+  card__body              ← Element: 우측 콘텐츠 패널
+  card__intro             ← Element: 인사말 문구
+
+profile                   ← Block: 프로필 헤더
+  profile__avatar         ← Element: 이미지 컨테이너 (figure)
+  profile__img            ← Element: img
+  profile__info           ← Element: 이름+태그라인 wrapper
+  profile__name           ← Element: h1
+  profile__tagline        ← Element: p
+
+skills                    ← Block: 스킬 섹션
+  skills__title           ← Element: h2
+  skills__list            ← Element: ul
+
+badge                     ← Block: 스킬 뱃지 (독립 재사용 단위)
+
+card-footer               ← Block: 하단 버튼 영역
+links                     ← Block: 버튼 네비게이션
+  links__btn              ← Element: 버튼 공통 스타일
+  links__btn--primary     ← Modifier: 진한 배경 (GitHub)
+  links__btn--outline     ← Modifier: 테두리형 (Email)
+```
+
+다크모드는 `html.dark { }` 선택자 대신 `@media (prefers-color-scheme: dark)` 안에서 CSS 커스텀 프로퍼티(`:root { }`)를 오버라이드하는 방식으로 구현했다. 모든 색상을 `var(--color-name)` 변수로 추상화했기 때문에, 미디어 쿼리 안에서 변수 값만 바꾸면 스타일 규칙은 전혀 건드리지 않아도 된다.
+
+```css
+/* 라이트 */
+:root {
+  --card-bg: #ffffff;
+  --text-name: #111827;
+  ...
+}
+
+/* 다크 — 값만 교체, 규칙은 재작성 없음 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --card-bg: #1f2937;
+    --text-name: #f9fafb;
+    ...
+  }
+}
+```
+
+## 2) 두 방식 직접 비교
+
+같은 카드를 두 가지 방법으로 구현하고 나서 느낀 실질적인 차이를 정리했다.
+
+**HTML 가독성**
+
+BEM의 HTML은 클래스명이 짧고 의미가 명확해서 구조를 한눈에 읽을 수 있다. Tailwind의 HTML은 한 태그에 클래스가 10개 이상 붙는 경우가 흔해서, 처음 보는 사람이 구조를 파악하려면 클래스 목록을 걷어내고 태그 자체를 봐야 한다.
+
+```html
+<!-- BEM: 구조가 먼저 눈에 들어온다 -->
+<figure class="profile__avatar">
+  <img class="profile__img" src="...">
+</figure>
+
+<!-- Tailwind: 스타일이 구조보다 먼저 눈에 들어온다 -->
+<figure class="mb-3 sm:mb-4 group w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ring-4 ring-indigo-200 dark:ring-indigo-800 ...">
+  <img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" src="...">
+</figure>
+```
+
+**CSS 관리**
+
+Tailwind는 CSS를 거의 작성하지 않는다. 반면 BEM은 모든 스타일을 직접 작성해야 하므로 코드량이 많다. 그러나 BEM은 스타일이 한 곳에 모여 있어서 전체 색상 팔레트나 간격 체계를 바꿀 때 CSS 커스텀 프로퍼티 값 하나만 수정하면 된다. Tailwind에서 같은 작업을 하려면 해당 클래스가 쓰인 모든 태그를 찾아 수정해야 한다.
+
+**다크모드 구현 난이도**
+
+| | Tailwind | BEM |
+|---|---|---|
+| 방식 | `dark:` 접두사를 모든 요소에 추가 | CSS 변수 값만 오버라이드 |
+| 코드 위치 | HTML 각 태그마다 분산 | CSS `:root` 한 곳에 집중 |
+| 새 색상 추가 시 | 해당 태그에 `dark:` 클래스 추가 | 변수 선언 한 줄 추가 |
+
+다크모드만 놓고 보면 CSS 커스텀 프로퍼티를 사용한 BEM 방식이 훨씬 체계적이었다. Tailwind는 스킬 뱃지 하나를 다크모드로 만들기 위해 `dark:bg-indigo-900 dark:text-indigo-300`을 다섯 개 뱃지 모두에 반복해서 붙여야 했다.
+
+**반응형**
+
+Tailwind의 `sm:` `lg:` 접두사는 미디어 쿼리를 완전히 인라인화한다. 어떤 브레이크포인트에서 어떤 값이 적용되는지 태그 한 줄로 파악할 수 있다는 점은 장점이다. BEM은 별도 `@media` 블록을 작성해야 하지만, 반응형 변경 사항이 CSS 파일에 모여 있어서 "이 브레이크포인트에서 뭐가 달라지는가"를 한 곳에서 볼 수 있다.
+
+**결론**
+
+두 방식 모두 "CSS를 무작정 작성했을 때"의 문제(충돌, 중복, 유지보수 어려움)를 해결하지만, 접근 방향이 반대다.
+
+- BEM은 **"CSS를 잘 조직화"** 하는 방식이다. HTML은 가볍게, 스타일은 CSS에 집중한다.
+- Tailwind는 **"CSS를 쓰지 않는"** 방식이다. 스타일을 HTML에 직접 조립해서 CSS 파일 자체를 최소화한다.
+
+React처럼 컴포넌트가 이미 재사용 단위를 보장하는 환경에서는 Tailwind가 더 잘 맞고, 컴포넌트 시스템 없이 HTML/CSS만 다루는 환경이나 디자인 토큰을 중앙에서 관리해야 하는 프로젝트에서는 BEM + CSS 커스텀 프로퍼티 조합이 유리하다고 느꼈다.
