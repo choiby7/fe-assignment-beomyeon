@@ -143,6 +143,8 @@
 └── 버튼 영역 : GitHub 링크 버튼, 블로그 버튼
 ```
 
+**디자인 시안** — [id-card-design.pdf](id-card-design.pdf)
+
 ---
 
 ## 3. 구현 (Tailwind CSS)
