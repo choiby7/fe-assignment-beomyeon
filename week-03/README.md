@@ -172,6 +172,40 @@ article                 ← 카드 전체 (독립 콘텐츠 단위)
             └── button  ← Email
 ```
 
+### 구현 도중 알게된 점.
+
+**flex-1의 실제 CSS 의미**
+- 다음 CSS의 세 가지 속성을 한 번에 줄인 축약형
+  - flex-grow:1; - 남는 공간이 있다면 비례해서 늘어남.
+  - flex-shrink: 1; - 공간이 부족하다면 비례해서 줄어듦.
+  - flex-basis:0%; - 요소의 기본 크기를 0으로 간주하고 공간을 나눈다.
+- docs에는 다음과 같이 서술되어 있다.
+  - Use flex-<number> utilities like flex-1 to allow a flex item to grow and shrink as needed, ignoring its initial size.
+  - <number> 만큼 비율을 유지하면서 축소/확장 된다는 의미이다.
+  - 이때, flex-basis: 0% 가 들어있기 때문에, w-16 등으로 너비를 지정했다면, 그 너비는 무시된다.
+
+> Tailwind CSS 클래스 내부 다양한 속성이 정의되어 있고, 각 속성끼리 충돌이 일어날 수 있다는 사실을 기억해둬야할 것 같다.
+
+** CSS 속성 우선순위 **
+
+위의 문제로 인해서 조사한 내용.
+
+|순위|대상(Selector)|점수(가중치)|예시|
+|---|---|---|---|
+|1|!important|무한대|color:red !important;|
+|2|Inline Style|1000점|<div style="color: blue;">|
+|3|ID selector|100점|#header {...}|
+|4|Class, 속성, 가상클래스| 10점| .btn, [type="text"], :hover|
+|5|Tag요소, 가상요소|1점|div,h1,::before|
+|6|전체 선택자, 상속|0점|*{...}|
+
+예외 상황 규칙
+1. 점수가 같다면 CSS 파일상 더 아래(나중)에 있는 코드가 최종 적용된다.
+2. Tailwind에서는 HTML에 적는 순서보다 CSS 빌드 결과물의 순서가 중요하다.
+3. CSS 빌드 순서를 강제하고 싶으면 조건부 렌더링이나 외부 도구를 써야한다.
+
+
+
 ### 주요 구현 결정
 
 Tailwind를 처음 쓰다 보니 클래스 목록이 한 요소에 10개를 넘어가는 경우가 많았다. 이 자체가 "HTML이 비대해진다"는 Tailwind의 단점을 직접 체감하는 순간이었다. 반면 CSS 파일을 열 필요가 전혀 없었고, 어떤 스타일이 적용될지 태그만 보고 즉시 예측할 수 있다는 점은 확실히 편했다.
@@ -495,6 +529,86 @@ HTML에서 `<li>`를 5개 반복하며 동일한 클래스를 붙이던 것이, 
 
 이것이 Tailwind가 React 생태계에서 특히 잘 맞는 이유다. `@apply`로 CSS 클래스를 만들지 않아도, 컴포넌트 자체가 스타일의 재사용 단위가 되기 때문이다.
 
+---
+
+### index.html을 React로 변환하면
+
+현재 `index.html`의 카드 4장은 같은 HTML 구조를 반복한다. React로 옮기면 카드 구조를 컴포넌트로 한 번만 정의하고, 데이터만 바꿔 넣는 방식으로 바뀐다.
+
+**컴포넌트 분리 구조**
+
+```
+App
+└── ProfileCardGrid
+    └── ProfileCard          ← article 전체
+        ├── CardHeader       ← header (프로필 이미지 + 이름 + 태그라인)
+        │   └── Avatar       ← figure > img
+        ├── CardIntro        ← p (인사말)
+        ├── SkillList        ← section > ul
+        │   └── Badge        ← span (뱃지 하나)
+        └── CardFooter       ← footer > nav (버튼 두 개)
+```
+
+```jsx
+// App.jsx
+const members = [
+  {
+    name: "최범연",
+    tagline: "효율적인 시스템과 도구를 고민하는 개발자",
+    intro: "안녕하세요. 프론트엔드 팀 최범연입니다.\n열심히 하겠습니다.",
+    skills: ["HTML/CSS", "JS", "React", "C / System", "Vim/CLI"],
+    githubUrl: "https://github.com/choiby7",
+    avatarSrc: "profile.jpg",
+  },
+  {
+    name: "",
+    tagline: "사용자 경험을 먼저 생각하는 디자이너",
+    intro: "안녕하세요. UI/UX 팀입니다.\n좋은 결과물로 보답하겠습니다.",
+    skills: ["Figma", "HTML/CSS", "Vue", "Storybook"],
+    githubUrl: "https://github.com/",
+    avatarSrc: "profile.jpg",
+  },
+  // ... 나머지 멤버
+];
+
+export default function App() {
+  return (
+    <main className="min-h-screen bg-gray-100 dark:bg-gray-900
+                     p-4 sm:p-6 lg:p-10 transition-colors duration-300">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
+                      gap-5 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
+        {members.map((member) => (
+          <ProfileCard key={member.name || member.tagline} {...member} />
+        ))}
+      </div>
+    </main>
+  );
+}
+```
+
+**핵심 변화**
+
+| | index.html | React 컴포넌트 |
+|---|---|---|
+| 카드 추가 | `<article>` 블록을 통째로 복사 | `members` 배열에 객체 한 줄 추가 |
+| 스타일 수정 | 반복된 태그를 모두 찾아 수정 | 해당 컴포넌트 파일 하나만 수정 |
+| 데이터와 구조 | HTML 안에 혼재 | 데이터(`members`)와 구조(`ProfileCard`)가 분리 |
+| Tailwind 클래스 중복 | 카드마다 동일 클래스 반복 | 컴포넌트 정의에 한 번만 작성 |
 
 
+**결론**
 React처럼 컴포넌트가 이미 재사용 단위를 보장하는 환경에서는 **Tailwind**가 더 잘 맞고, 컴포넌트 시스템 없이 HTML/CSS만 다루는 환경이나 디자인 토큰을 중앙에서 관리해야 하는 프로젝트에서는 **BEM + CSS 커스텀 프로퍼티** 조합이 유리하다고 느꼈다.
+
+### 앞으로 - 디자인 팀과의 협업
+
+디자인 팀에서 프론트엔드 개발팀으로 결과물을 전달하고 구현을 요청하는 과정을 '디자인 핸드오프'라고 한다.
+
+이때, 각 요소에 대한 세부 설정을 통일한 정보(규칙)를 디자인 시스템이라고 하며, 이는 tailwindcss.config.js 등에 저장할 수 있다.
+
+디자인 시스템과 CSS의 관계에 대해 학습하면 좋을 것 같다.
+
+- 디자인 토큰 
+- 에셋
+- tailwindcss.config.js
+
+
