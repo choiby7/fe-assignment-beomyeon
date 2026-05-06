@@ -358,18 +358,143 @@ Tailwind의 `sm:` `lg:` 접두사는 미디어 쿼리를 완전히 인라인화�
 
 **⑤ 유지보수 측면 비교**
 
+HTML + CSS 만 사용했을 때의 BEM 방식과 TailwindCSS의 유지보수 측면을 비교해보자.
+
 | 비교 항목 | BEM | Tailwind |
 |---|---|---|
 | 스타일 수정 위치 | CSS 파일을 열어서 수정 | HTML / 컴포넌트 파일에서 수정 |
 | 의존성 | 구조와 CSS 이름이 강하게 결합됨 | 스타일이 클래스 자체에 고립되어 결합도가 낮음 |
 | 확장성 | 새로운 요소 추가 시 새 클래스 이름 필요 | 기존 클래스 조합만으로 거의 모든 UI 대응 가능 |
 | 파일 크기 | 프로젝트가 커질수록 CSS 파일도 커짐 | CSS 크기는 일정 수준에서 멈추지만 HTML 파일 크기가 증가 |
+| 가독성 | HTML 문서의 DOM 구조가 잘 보이고 Tailwind에 비해 가독성이 좋음 | HTML 파일이 커짐에 따라 구조파악이 힘들고 내용이 많아 가독성이 떨어지는 편 |
+| 중복 | 같은 클래스의 스타일을 한번에 수정 가능 | 중복 적용되는 스타일을 모두 수정하고 싶다면 모든 태그의 스타일을 수정해야함. |
 
 **⑥ 결론**
 
-두 방식 모두 "CSS를 무작정 작성했을 때"의 문제(충돌, 중복, 유지보수 어려움)를 해결하지만, 접근 방향이 정반대다.
+두 방식 모두 "CSS를 무작정 작성했을 때"의 문제(충돌, 중복, 유지보수 어려움)를 어느정도 해결하지만, 접근 방향이 정반대다.
 
 - **BEM** — *"CSS를 잘 조직화"* 하는 방식. HTML은 가볍게, 스타일은 CSS에 집중한다.
 - **Tailwind** — *"CSS를 쓰지 않는"* 방식. 스타일을 HTML에 직접 조립해서 CSS 파일 자체를 최소화한다.
+
+현재는 BEM 방식이 조금더 구조적이고 유지보수 측면에서도 좋아보인다.
+
+다음으로 BEM과 Tailwind의 장단점을 합쳐보기 위한 시도를 보인다.
+
+### BEM과 Tailwind 조합
+
+TailwindCSS는 html 임베드 방식 뿐 아니라, CSS 파일에도 작성할 수 있다.
+
+현재 index.html에 tailwindcss로 적용한 태그 아이템의 속성 값들이 다음과 같이 늘어나있다.
+
+```
+<li><span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-medium rounded-full cursor-default px-3 py-1 text-xs sm:text-sm transition-all duration-200 hover:-translate-y-1 hover:bg-indigo-600 hover:text-white hover:shadow-md">HTML/CSS</span></li>
+<li><span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-medium rounded-full cursor-default px-3 py-1 text-xs sm:text-sm transition-all duration-200 hover:-translate-y-1 hover:bg-indigo-600 hover:text-white hover:shadow-md">JS</span></li>
+<li><span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-medium rounded-full cursor-default px-3 py-1 text-xs sm:text-sm transition-all duration-200 hover:-translate-y-1 hover:bg-indigo-600 hover:text-white hover:shadow-md">React</span></li>
+<li><span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-medium rounded-full cursor-default px-3 py-1 text-xs sm:text-sm transition-all duration-200 hover:-translate-y-1 hover:bg-indigo-600 hover:text-white hover:shadow-md">C / System</span></li>
+<li><span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-medium rounded-full cursor-default px-3 py-1 text-xs sm:text-sm transition-all duration-200 hover:-translate-y-1 hover:bg-indigo-600 hover:text-white hover:shadow-md">Vim/CLI</span></li>
+```
+
+4개의 리스트 요소들은 span 태그의 class 값들은 모두 같은 값을 가지고 있고 중복되어 사용되고 있다. 이런 상황에서는 재사용성을 위해 CSS 파일을 사용하는 것이 좋아보인다.
+
+Tailwind는 CSS 파일에서 `@apply` 지시어를 통해 유틸리티 클래스를 묶을 수 있다. BEM으로 클래스 이름을 짓고, 그 클래스 안에 Tailwind 클래스를 `@apply`로 적용하면 두 방식의 장점을 모두 취할 수 있다.
+
+**HTML — BEM 클래스명만 남긴다**
+
+```html
+<!-- Before: Tailwind 클래스가 span마다 반복 -->
+<li><span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300
+                 font-medium rounded-full cursor-default px-3 py-1 text-xs sm:text-sm
+                 transition-all duration-200 hover:-translate-y-1 hover:bg-indigo-600
+                 hover:text-white hover:shadow-md">HTML/CSS</span></li>
+
+<!-- After: BEM 클래스 하나로 교체 -->
+<li><span class="badge">HTML/CSS</span></li>
+```
+
+**CSS 파일 — `@apply`로 유틸리티 클래스를 BEM 클래스에 묶는다**
+
+```css
+/* styles.css */
+.badge {
+  @apply bg-indigo-100 dark:bg-indigo-900
+         text-indigo-700 dark:text-indigo-300
+         font-medium rounded-full cursor-default
+         px-3 py-1 text-xs sm:text-sm
+         transition-all duration-200
+         hover:-translate-y-1 hover:bg-indigo-600
+         hover:text-white hover:shadow-md;
+}
+```
+
+**장점과 한계**
+
+| | 순수 Tailwind (인라인) | BEM + `@apply` |
+|---|---|---|
+| HTML 가독성 | 클래스가 길어 구조 파악이 어려움 | BEM 클래스명으로 간결하게 유지 |
+| 재사용성 | 같은 클래스를 태그마다 반복 | 클래스명 하나로 스타일 공유 |
+| 스타일 수정 위치 | HTML 파일 내 모든 태그 | CSS 파일의 클래스 정의 한 곳 |
+| 클래스 이름 고민 | 불필요 | BEM 이름을 직접 설계해야 함 |
+
+> `@apply`는 CDN 방식에서는 동작하지 않는다. Vite, Next.js 등 빌드 도구와 Tailwind를 npm으로 설치한 환경에서만 사용 가능하다.
+
+결국 Tailwind는 이미 정해진 블록들을 조립하여 새로운 스타일을 만들고, 이를 하나로 묶어 BEM 방식으로 HTML태그에 적용하니 TailwindCSS의 단점인 가독성이나 유지보수성 측면에서도 
+
+결국 BEM + `@apply` 조합은 "HTML은 BEM처럼 가볍게, 스타일 구현은 Tailwind 유틸리티로" 하는 절충안이다. 컴포넌트 단위로 재사용이 잦은 UI 요소(버튼, 뱃지, 카드 등)에 적용하면 중복을 크게 줄일 수 있다.
+
+### 실제 사용 조사 
+
+현재는 HTML + CSS 단독으로 사용하지 않고, JS를 포함한 REACT 프레임워크를 사용하기 때문에 그에 맞는 CSS 방법론을 사용해야한다.
+
+TailwindCSS 중심의 CSS 방법론이 부상하게 된 것도 React의 컴포넌트 중심의 방식 때문이라고 생각한다.
+
+HTML 마크업은 React에서 미리 '컴포넌트'화 해 놓았기 때문에, 그 컴포넌트의 class 속성 값에 TailwindCSS를 작성하면 마크업과 스타일이 하나의 파일에 모인다. (.jsx)
+따라서 그 컴포넌트는 디자인과 구조를 모두 갖춘 독립적이고 완결성 있는 UI 모듈이 된다.
+
+**컴포넌트 예시**
+
+뱃지를 React 컴포넌트로 분리하면, 반복되는 클래스 나열 문제가 구조적으로 해결된다.
+
+```jsx
+// Badge.jsx — 뱃지 컴포넌트
+function Badge({ children }) {
+  return (
+    <span className="bg-indigo-100 dark:bg-indigo-900
+                     text-indigo-700 dark:text-indigo-300
+                     font-medium rounded-full cursor-default
+                     px-3 py-1 text-xs sm:text-sm
+                     transition-all duration-200
+                     hover:-translate-y-1 hover:bg-indigo-600
+                     hover:text-white hover:shadow-md">
+      {children}
+    </span>
+  );
+}
+```
+
+```jsx
+// SkillList.jsx — 뱃지 컴포넌트를 조합해 사용
+function SkillList({ skills }) {
+  return (
+    <ul className="flex flex-wrap gap-2">
+      {skills.map((skill) => (
+        <li key={skill}>
+          <Badge>{skill}</Badge>
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+```jsx
+// 실제 사용
+<SkillList skills={["HTML/CSS", "JS", "React", "C / System", "Vim/CLI"]} />
+```
+
+HTML에서 `<li>`를 5개 반복하며 동일한 클래스를 붙이던 것이, `<Badge>` 컴포넌트 하나로 추상화된다. 클래스를 수정할 때는 `Badge.jsx` 한 파일만 열면 되고, 어떤 곳에서든 `<Badge>`를 가져다 쓰면 동일한 스타일이 보장된다.
+
+이것이 Tailwind가 React 생태계에서 특히 잘 맞는 이유다. `@apply`로 CSS 클래스를 만들지 않아도, 컴포넌트 자체가 스타일의 재사용 단위가 되기 때문이다.
+
+
 
 React처럼 컴포넌트가 이미 재사용 단위를 보장하는 환경에서는 **Tailwind**가 더 잘 맞고, 컴포넌트 시스템 없이 HTML/CSS만 다루는 환경이나 디자인 토큰을 중앙에서 관리해야 하는 프로젝트에서는 **BEM + CSS 커스텀 프로퍼티** 조합이 유리하다고 느꼈다.
