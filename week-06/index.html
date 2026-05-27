@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS 함수의 모든 종류 · 발표용 데모</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', 'D2Coding', 'Menlo', 'Consolas', monospace;
+      background: #0d1117;
+      color: #c9d1d9;
+      line-height: 1.6;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(135deg, #161b22 0%, #1f2428 100%);
+      border-bottom: 1px solid #30363d;
+      padding: 20px 32px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(8px);
+    }
+    header h1 {
+      margin: 0;
+      color: #58a6ff;
+      font-size: 22px;
+      letter-spacing: -0.3px;
+    }
+    header .subtitle {
+      margin: 6px 0 0;
+      color: #8b949e;
+      font-size: 13px;
+    }
+    main {
+      padding: 24px 32px 80px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .hint {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-left: 3px solid #58a6ff;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+      color: #8b949e;
+      font-size: 13px;
+    }
+    .hint code {
+      color: #79c0ff;
+      background: #0d1117;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+    #output {
+      background: #010409;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 20px 24px;
+      min-height: 200px;
+    }
+    #output .line {
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+      padding: 2px 0;
+    }
+    #output .header {
+      color: #f0883e;
+      font-weight: bold;
+      margin: 24px 0 10px;
+      font-size: 15px;
+      padding: 8px 14px;
+      background: rgba(240, 136, 62, 0.08);
+      border-left: 3px solid #f0883e;
+      border-radius: 0 4px 4px 0;
+    }
+    #output .header:first-child { margin-top: 0; }
+    #output .error { color: #f85149; }
+    #output .warn  { color: #d29922; }
+    .console-table {
+      border-collapse: collapse;
+      margin: 12px 0 4px;
+      font-size: 13px;
+      width: auto;
+    }
+    .console-table th,
+    .console-table td {
+      border: 1px solid #30363d;
+      padding: 8px 14px;
+      text-align: left;
+    }
+    .console-table th {
+      background: #161b22;
+      color: #79c0ff;
+      font-weight: 600;
+    }
+    .console-table td { color: #c9d1d9; }
+    .console-table tbody tr:hover { background: rgba(88, 166, 255, 0.05); }
+    footer {
+      text-align: center;
+      color: #484f58;
+      font-size: 12px;
+      padding: 16px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>JavaScript 함수의 모든 종류</h1>
+    <p class="subtitle">Mastering JavaScript Functional Programming · CH3 — 발표용 데모</p>
+  </header>
+
+  <main>
+    <div class="hint">
+      💡 <code>js_functions.js</code> 와 <code>modern_js.js</code> 의 <code>console.log</code> 출력을 아래 패널에 미러링합니다.
+      브라우저 개발자 도구(F12 → Console) 에서도 동일한 결과를 확인할 수 있어요.
+    </div>
+
+    <div id="output"></div>
+  </main>
+
+  <footer>JS Functions Demo · #LikeLion FE Week 06</footer>
+
+  <!-- 1) 콘솔 미러링 셋업 (반드시 데모 스크립트보다 먼저 실행) -->
+  <script>
+    (function () {
+      const out = document.getElementById('output');
+
+      function formatArg(arg) {
+        if (typeof arg === 'string')   return arg;
+        if (typeof arg === 'function') return arg.toString();
+        if (arg instanceof Error)      return arg.stack || arg.message;
+        if (arg === undefined)         return 'undefined';
+        if (arg === null)              return 'null';
+        if (typeof arg === 'object') {
+          try { return JSON.stringify(arg, null, 2); }
+          catch { return String(arg); }
+        }
+        return String(arg);
+      }
+
+      function isHeader(text) {
+        return /^=====.+=====$/.test(text.trim());
+      }
+
+      function appendLine(text, className) {
+        const div = document.createElement('div');
+        div.className = 'line' + (className ? ' ' + className : '');
+        div.textContent = text;
+        out.appendChild(div);
+      }
+
+      const orig = {
+        log:   console.log.bind(console),
+        error: console.error.bind(console),
+        warn:  console.warn.bind(console),
+        info:  console.info.bind(console),
+        table: console.table.bind(console)
+      };
+
+      console.log = function (...args) {
+        orig.log(...args);
+        const text = args.map(formatArg).join(' ');
+        appendLine(text, isHeader(text) ? 'header' : '');
+      };
+
+      console.info = function (...args) {
+        orig.info(...args);
+        appendLine(args.map(formatArg).join(' '));
+      };
+
+      console.error = function (...args) {
+        orig.error(...args);
+        appendLine(args.map(formatArg).join(' '), 'error');
+      };
+
+      console.warn = function (...args) {
+        orig.warn(...args);
+        appendLine(args.map(formatArg).join(' '), 'warn');
+      };
+
+      console.table = function (data) {
+        orig.table(data);
+        if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'object' && data[0] !== null) {
+          const keys = Object.keys(data[0]);
+          const table = document.createElement('table');
+          table.className = 'console-table';
+
+          const thead = document.createElement('thead');
+          const headerRow = document.createElement('tr');
+          keys.forEach(k => {
+            const th = document.createElement('th');
+            th.textContent = k;
+            headerRow.appendChild(th);
+          });
+          thead.appendChild(headerRow);
+          table.appendChild(thead);
+
+          const tbody = document.createElement('tbody');
+          data.forEach(row => {
+            const tr = document.createElement('tr');
+            keys.forEach(k => {
+              const td = document.createElement('td');
+              td.textContent = row[k] == null ? '' : String(row[k]);
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+          table.appendChild(tbody);
+          out.appendChild(table);
+        } else {
+          appendLine(formatArg(data));
+        }
+      };
+
+      // 전역 에러도 패널에 표시
+      window.addEventListener('error', e => {
+        appendLine('Uncaught ' + (e.error?.stack || e.message), 'error');
+      });
+    })();
+  </script>
+
+  <!-- 2) 데모 스크립트들 -->
+  <script src="modern_js.js"></script>
+  <script src="js_functions.js"></script>
+</body>
+</html>
