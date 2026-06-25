@@ -7,7 +7,7 @@
   min-height: 100vh;
   background: #0d1117;
   color: #c9d1d9;
-  font-family: 'JetBrains Mono', 'D2Coding', 'Menlo', 'Consolas', monospace;
+  font-family: 'Consolas', monospace;
   font-size: 14px;
   line-height: 1.6;
   text-align: left;
@@ -105,20 +105,6 @@
   font-size: 16px;
 }
 
-.demo-title {
-  margin: 0;
-  color: #f0883e;
-  font-size: 16px;
-  font-weight: 600;
-  font-family: inherit;
-}
-
-.demo-description {
-  margin: 0 0 14px 52px;
-  color: #8b949e;
-  font-size: 13px;
-  line-height: 1.7;
-}
 
 /* ---------------- 콘솔 출력 패널 ---------------- */
 .console-output {
@@ -181,23 +167,4 @@
   font-size: 12px;
   padding: 20px;
   border-top: 1px solid #21262d;
-}
-
-/* ---------------- 반응형 ---------------- */
-@media (max-width: 700px) {
-  .app-header {
-    padding: 18px 20px;
-  }
-  .app-main {
-    padding: 20px 16px 60px;
-  }
-  .demo-section {
-    padding: 18px 18px;
-  }
-  .demo-description,
-  .console-output,
-  .summary-table {
-    margin-left: 0;
-    max-width: 100%;
-  }
 }
