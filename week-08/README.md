@@ -15,7 +15,7 @@
 
 ## 0. 비동기 기초 - async / await / fetch
 
-3장 "비동기 통신"을 이해하려면 먼저 자바스크립트의 **비동기** 기본기가 필요하다.
+자바스크립트의 **비동기** 기본기
 
 ### 동기 vs 비동기
 
@@ -24,34 +24,14 @@
 | **동기(synchronous)** | 코드가 위→아래로 한 줄씩, 앞 작업이 끝나야 다음 줄 실행 |
 | **비동기(asynchronous)** | 오래 걸리는 작업(네트워크 요청 등)은 시켜만 놓고 기다리지 않고 다음 줄로, 끝나면 그때 결과를 처리 |
 
+
+
 > API 요청은 "서버에 다녀오는" 시간이 걸리는 일이라 **비동기**로 처리한다.
+>
 > 그 "나중에 끝날 작업"을 담은 객체가 **Promise** 다.
+>  
+> 즉, Promise는 비동기적인 내용을 동기적으로 사용할 수 있게하는 객체이다. 
 
-### Promise - 비동기 작업의 3가지 상태
-
-`Promise` 는 "미래에 끝날 비동기 작업의 결과"를 담는 객체다. 내부에 **상태**를 갖는다.
-
-| 상태 | 뜻 |
-|------|----|
-| **pending** (대기) | 아직 안 끝남 - 더 기다려야 함 |
-| **fulfilled** (이행/성공) | 완료됨, 결과값 사용 가능 |
-| **rejected** (거부/실패) | 실패함, 에러 발생 |
-
-- `pending` → `fulfilled` 또는 `rejected` 로 **한 번 확정되면 다시 바뀌지 않는다.**
-- "끝났는지"를 우리가 계속 캐묻는(polling) 게 아니라, **끝나는 순간 Promise 가 알려준다.**
-  `.then()`(성공)·`.catch()`(실패) 콜백을 등록해두거나, `await` 로 기다리면 된다.
-
-```js
-const p = fetch('...')   // 지금은 pending
-
-p.then((res) => { /* fulfilled 되는 순간 자동 호출 */ })
- .catch((err) => { /* rejected 되는 순간 자동 호출 */ })
-
-const res = await p      // 이 줄을 통과 = 완료(fulfilled) 보장 → 다음 줄부터 안심하고 사용
-```
-
-> 그래서 **`await` 다음 줄**과 **`.then` 콜백 안**은 "이미 완료된" 자리다.
-> "지금 기다리는 중"을 화면에 표시하려면 이 상태를 React 의 `loading` state 로 옮겨 그린다 (→ 3장 `useFetch`).
 
 ### fetch - 브라우저 내장 요청 함수
 
@@ -64,7 +44,7 @@ fetch('http://localhost:3000/products')
 ```
 
 - 별도 설치 없이 브라우저에 내장.
-- ⚠️ `fetch` 는 404·500 같은 **HTTP 에러를 `.catch` 로 보내지 않는다**. 네트워크 자체가 끊긴 경우만 실패로 본다.
+- !! `fetch` 는 404·500 같은 **HTTP 에러를 `.catch` 로 보내지 않는다**. 네트워크 자체가 끊긴 경우만 실패로 본다.
   그래서 `res.ok` 를 직접 확인해야 한다.
 
 ### async / await - Promise 를 동기 코드처럼
@@ -101,6 +81,8 @@ async function getProducts() {   // await 를 쓰려면 함수에 async
 | HTTP 에러(4xx/5xx) | `res.ok` 직접 확인 | 자동으로 `catch` 로 감 |
 | baseURL · timeout | 수동 | 옵션으로 간단 설정 |
 
+> 요즘에는 Tanstack Query라는 라이브러리를 사실상 표준급으로 많이 쓴다고 한다. (캐싱, 메모리 관리 기능)
+
 > **이 프로젝트는 `axios` 를 쓴다** ([src/api/client.js](week-08-react/src/api/client.js)). 개념은 동일하고,
 > 3장 `useFetch` 의 `await client.get(url)` 이 위 `await fetch(...)` 와 같은 역할이다.
 > 즉 **3장의 커스텀 훅이 바로 이 `async/await` + `try/catch/finally` 패턴**이다.
@@ -120,15 +102,12 @@ npm run dev      # ② React 앱 (Vite)           → http://localhost:5173
 # 한 번에 둘 다 실행
 npm run dev:all
 ```
-
-> ⚠️ **API 서버(`npm run server`)를 먼저 켜야** 상품이 보인다. 안 켜면 에러 화면이 나온다(의도된 동작).
-
 ---
 
 ## 1. React Router - 페이지 라우팅
 
 SPA(단일 페이지 앱)에서 **URL 마다 다른 화면**을 보여주게 해주는 라이브러리.
-새로고침 없이 화면만 바꿔치기한다.
+새로고침 없이 컴포넌트만 바꿔치기한다.
 
 | 경로 | 페이지 | 설명 |
 |------|--------|------|
