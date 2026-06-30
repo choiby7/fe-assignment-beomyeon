@@ -1,0 +1,227 @@
+/* =============================================================================
+ * App.css — useState / useRef / useEffect 데모 페이지
+ * 다크 테마 (GitHub Dark 계열)
+ * ============================================================================= */
+
+.app {
+  min-height: 100vh;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+/* ---------------- 헤더 ---------------- */
+.app-header {
+  padding: 24px 32px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.app-header .subtitle {
+  margin: 6px 0 0;
+  font-size: 13px;
+}
+
+/* ---------------- 메인 ---------------- */
+.app-main {
+  padding: 24px 32px 80px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* ---------------- 힌트 박스 ---------------- */
+.hint {
+  padding: 14px 18px;
+  border-radius: 6px;
+  margin-bottom: 28px;
+  color: #8b949e;
+  font-size: 13px;
+}
+
+.hint strong {
+  color: #79c0ff;
+}
+
+/* ---------------- 데모 섹션 ---------------- */
+.demo-section {
+  margin-bottom: 20px;
+  padding: 22px 26px;
+  background: #010409;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+}
+
+.demo-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.demo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: rgba(240, 136, 62, 0.15);
+  color: #f0883e;
+  font-weight: 700;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(240, 136, 62, 0.3);
+  flex-shrink: 0;
+}
+
+.demo-title {
+  margin: 4px 0 2px;
+  font-size: 16px;
+  color: #e6edf3;
+}
+
+.demo-desc {
+  margin: 0;
+  font-size: 13px;
+  color: #8b949e;
+}
+
+/* ---------------- 데모 본문 ---------------- */
+.demo-body {
+  padding-left: 48px;
+}
+
+.big-num {
+  font-size: 34px;
+  font-weight: 700;
+  margin: 4px 0 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.render-badge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin: 0 0 12px;
+}
+
+.note {
+  font-size: 12px;
+  color: #8b949e;
+  margin: 10px 0 0;
+}
+
+.note code {
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+/* ---------------- 비교 2단 ---------------- */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.compare-col {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 16px 18px;
+}
+
+.compare-col h4 {
+  margin: 0 0 6px;
+  color: #f0883e;
+  font-size: 13px;
+  font-family: 'Consolas', monospace;
+}
+
+/* ---------------- 버튼 / 인풋 ---------------- */
+button {
+  background: #21262d;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: #30363d;
+  border-color: #8b949e;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.text-input {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #c9d1d9;
+  font-size: 13px;
+  width: 260px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #58a6ff;
+  box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.25);
+}
+
+/* ---------------- 로그 박스 ---------------- */
+.log-box {
+  margin-top: 14px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-family: 'Consolas', monospace;
+  font-size: 12px;
+  min-height: 60px;
+}
+
+.log-box .empty {
+  color: #484f58;
+  font-style: italic;
+}
+
+.log-line {
+  padding: 2px 0;
+  color: #7ee787;
+}
+
+/* ---------------- 푸터 ---------------- */
+.app-footer {
+  text-align: center;
+  color: #484f58;
+  font-size: 12px;
+  padding: 20px;
+  border-top: 1px solid #21262d;
+}
