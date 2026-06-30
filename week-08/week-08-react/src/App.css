@@ -1,0 +1,452 @@
+/* =============================================================================
+ * App.css — 멋사몰 (Week 08: React Router + JSON Server)
+ * 다크 테마 (GitHub Dark 계열)
+ * ============================================================================= */
+
+.app {
+  min-height: 100vh;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------- 헤더 / 네비 ---------------- */
+.shop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  border-bottom: 1px solid #21262d;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(13, 17, 23, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #e6edf3;
+  text-decoration: none;
+  letter-spacing: -0.3px;
+}
+
+.shop-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.shop-nav a {
+  color: #8b949e;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.shop-nav a:hover {
+  background: #21262d;
+  color: #c9d1d9;
+}
+
+/* NavLink 가 현재 경로와 일치하면 자동으로 붙는 클래스 */
+.shop-nav a.active {
+  color: #79c0ff;
+  background: rgba(88, 166, 255, 0.12);
+}
+
+/* ---------------- 메인 ---------------- */
+.app-main {
+  flex: 1;
+  padding: 28px 32px 64px;
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.page-title {
+  margin: 0 0 4px;
+  font-size: 22px;
+  color: #e6edf3;
+}
+
+.page-sub {
+  margin: 0 0 24px;
+  color: #8b949e;
+  font-size: 13px;
+}
+
+/* ---------------- 상품 그리드 / 카드 ---------------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  display: block;
+  background: #010409;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.card:hover {
+  border-color: #58a6ff;
+  transform: translateY(-3px);
+}
+
+.card-thumb {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: #161b22;
+}
+
+.card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-body {
+  padding: 12px 14px 16px;
+}
+
+.card-category {
+  font-size: 11px;
+  color: #8b949e;
+}
+
+.card-name {
+  margin: 4px 0 8px;
+  font-size: 14px;
+  color: #e6edf3;
+  font-weight: 600;
+}
+
+.card-price {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f0883e;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------- 상품 상세 ---------------- */
+.back-btn {
+  margin-bottom: 18px;
+}
+
+.detail-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.detail-img {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #30363d;
+}
+
+.detail-category {
+  font-size: 12px;
+  color: #8b949e;
+}
+
+.detail-name {
+  margin: 6px 0 10px;
+  font-size: 24px;
+  color: #e6edf3;
+}
+
+.detail-price {
+  font-size: 22px;
+  font-weight: 700;
+  color: #f0883e;
+  margin: 0 0 16px;
+}
+
+.detail-desc {
+  color: #c9d1d9;
+  margin: 0 0 22px;
+}
+
+.add-btn {
+  background: #238636;
+  border-color: #2ea043;
+  color: #fff;
+  font-size: 14px;
+  padding: 10px 20px;
+  font-weight: 600;
+}
+
+.add-btn:hover:not(:disabled) {
+  background: #2ea043;
+}
+
+/* ---------------- 장바구니 ---------------- */
+.cart-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: #010409;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+}
+
+.cart-img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.cart-meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.cart-name {
+  font-weight: 600;
+  color: #e6edf3;
+}
+
+.cart-qty {
+  font-size: 12px;
+  color: #8b949e;
+}
+
+.cart-sub {
+  font-weight: 700;
+  color: #f0883e;
+  font-variant-numeric: tabular-nums;
+}
+
+.cart-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 16px;
+  border-top: 1px solid #21262d;
+}
+
+.cart-total {
+  font-size: 18px;
+  color: #e6edf3;
+}
+
+/* ---------------- 상태(로딩 / 에러 / 빈 화면) ---------------- */
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: #8b949e;
+}
+
+.status.error {
+  color: #f85149;
+}
+
+.status-hint {
+  font-size: 12px;
+  color: #8b949e;
+  margin: 0;
+}
+
+.status-hint code {
+  color: #f0883e;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #30363d;
+  border-top-color: #58a6ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: #8b949e;
+}
+
+.big-404 {
+  font-size: 56px;
+  font-weight: 800;
+  color: #30363d;
+  margin: 0;
+}
+
+.link-btn {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 18px;
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #c9d1d9;
+  text-decoration: none;
+}
+
+.link-btn:hover {
+  border-color: #8b949e;
+}
+
+/* ---------------- 버튼 공통 ---------------- */
+button {
+  background: #21262d;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: #30363d;
+  border-color: #8b949e;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------------- 푸터 ---------------- */
+.app-footer {
+  text-align: center;
+  color: #484f58;
+  font-size: 12px;
+  padding: 20px;
+  border-top: 1px solid #21262d;
+}
+
+/* ---------------- 카테고리 필터 ---------------- */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.filter-chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.filter-chip.active {
+  background: rgba(88, 166, 255, 0.15);
+  border-color: #58a6ff;
+  color: #79c0ff;
+}
+
+/* ---------------- 리뷰 ---------------- */
+.reviews {
+  margin-top: 40px;
+  border-top: 1px solid #21262d;
+  padding-top: 24px;
+}
+
+.reviews-title {
+  font-size: 18px;
+  color: #e6edf3;
+  margin: 0 0 16px;
+}
+
+.reviews-msg {
+  color: #8b949e;
+  font-size: 13px;
+}
+
+.review-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-item {
+  background: #010409;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.review-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.review-user {
+  font-weight: 600;
+  color: #e6edf3;
+  font-size: 13px;
+}
+
+.review-stars {
+  color: #e3b341;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.review-text {
+  margin: 0;
+  color: #c9d1d9;
+  font-size: 13px;
+}
+
+/* ---------------- 반응형 ---------------- */
+@media (max-width: 640px) {
+  .detail-body {
+    grid-template-columns: 1fr;
+  }
+  .app-main {
+    padding: 20px 18px 48px;
+  }
+  .shop-header {
+    padding: 14px 18px;
+  }
+}
